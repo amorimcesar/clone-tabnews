@@ -1,6 +1,6 @@
 function Home () {
     return <h1>
-        Teste 2
+        Rafaela, eu amo você. Se você me ama, dá uma risadinha! 😎
     </h1>
 }
 
