@@ -1,0 +1,23 @@
+GET https://clone-tabnews-git-fix-migrations-endpoint-csar-amorims-projects.vercel.app/api/v1/status
+
+###
+POST https://clone-tabnews-git-fix-migrations-endpoint-csar-amorims-projects.vercel.app/api/v1/migrations
+
+###
+
+GET https://clone-tabnews-git-fix-migrations-endpoint-csar-amorims-projects.vercel.app/api/v1/migrations
+
+###
+DELETE https://clone-tabnews-git-fix-migrations-endpoint-csar-amorims-projects.vercel.app/api/v1/migrations
+
+###
+GET https://amorimcesar.com.br/api/v1/status
+
+###
+POST https://amorimcesar.com.br/api/v1/migrations
+
+###
+GET https://amorimcesar.com.br/api/v1/migrations
+
+###
+DELETE https://amorimcesar.com.br/api/v1/migrations
