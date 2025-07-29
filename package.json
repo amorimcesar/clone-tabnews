@@ -12,7 +12,9 @@
     "lint:check": "prettier --check .",
     "lint:fix": "prettier --write .",
     "test": "jest",
-    "test:watch": "jest --watchAll"
+    "test:watch": "jest --watchAll",
+    "migration:create": "node-pg-migrate --migrations-dir infra/migrations create",
+    "migration:up": "node-pg-migrate --migrations-dir infra/migrations --envPath .env.development up"
   },
   "repository": {
     "type": "git",
@@ -25,7 +27,9 @@
   },
   "homepage": "https://github.com/amorimcesar/clone-tabnews#readme",
   "dependencies": {
+    "dotenv": "^17.2.1",
     "next": "^15.3.2",
+    "node-pg-migrate": "^8.0.3",
     "pg": "^8.16.3",
     "react": "^19.1.0",
     "react-dom": "^19.1.0"
