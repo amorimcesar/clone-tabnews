@@ -3,7 +3,6 @@
   "version": "1.0.0",
   "description": "Implementação do https://www.tabnews.com.br para o https://curso.dev",
   "main": "index.js",
-  "type": "module",
   "scripts": {
     "dev": " npm run services:up && next dev",
     "services:up": "docker compose -f infra/compose.yaml up -d",
@@ -11,8 +10,8 @@
     "services:down": "docker compose -f infra/compose.yaml down",
     "lint:check": "prettier --check .",
     "lint:fix": "prettier --write .",
-    "test": "jest",
-    "test:watch": "jest --watchAll",
+    "test": "jest --runInBand",
+    "test:watch": "jest --watchAll --runInBand",
     "migration:create": "node-pg-migrate --migrations-dir infra/migrations create",
     "migration:up": "node-pg-migrate --migrations-dir infra/migrations --envPath .env.development up"
   },
@@ -28,8 +27,9 @@
   "homepage": "https://github.com/amorimcesar/clone-tabnews#readme",
   "dependencies": {
     "dotenv": "^17.2.1",
+    "dotenv-expand": "^11.0.6",
     "next": "^15.3.2",
-    "node-pg-migrate": "^8.0.3",
+    "node-pg-migrate": "^6.2.2",
     "pg": "^8.16.3",
     "react": "^19.1.0",
     "react-dom": "^19.1.0"
