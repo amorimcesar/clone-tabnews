@@ -2,17 +2,23 @@ import useSWR from "swr";
 
 async function fetchApi(key) {
   const response = await fetch(key);
+
+  if (!response.ok) {
+    const errorData = await response.json();
+    throw new Error(errorData.message || "Erro ao buscar dados");
+  }
+
   const data = await response.json();
   return data;
 }
 
 export default function StatusPage() {
-  const { isLoading, data } = useSWR("/api/v1/status", fetchApi, {
+  const { data, isLoading, error } = useSWR("/api/v1/status", fetchApi, {
     refreshInterval: 2000,
   });
 
   const getStatusColor = () => {
-    if (!data) return "#6b7280";
+    if (!data?.database) return "#6b7280";
     const usage =
       (data.database.used_connections / data.database.max_connections) * 100;
     if (usage < 50) return "#10b981";
@@ -21,7 +27,7 @@ export default function StatusPage() {
   };
 
   const getConnectionPercentage = () => {
-    if (!data) return 0;
+    if (!data?.database) return 0;
     return (
       (data.database.used_connections / data.database.max_connections) * 100
     );
@@ -79,7 +85,6 @@ export default function StatusPage() {
           width: 12px;
           height: 12px;
           border-radius: 50%;
-          background-color: ${getStatusColor()};
           animation: pulse 2s infinite;
         }
 
@@ -209,10 +214,8 @@ export default function StatusPage() {
 
         .progress-fill {
           height: 100%;
-          background-color: ${getStatusColor()};
           border-radius: 1rem;
           transition: width 0.5s ease-out, background-color 0.3s ease;
-          width: ${getConnectionPercentage()}%;
         }
 
         .progress-labels {
@@ -267,6 +270,58 @@ export default function StatusPage() {
           margin-left: auto;
         }
 
+        .error-card {
+          background: rgba(127, 29, 29, 0.3);
+          border: 1px solid #991b1b;
+        }
+
+        .error-icon {
+          width: 48px;
+          height: 48px;
+          background: #7f1d1d;
+          border-radius: 50%;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          flex-shrink: 0;
+        }
+
+        .error-icon svg {
+          width: 24px;
+          height: 24px;
+          color: #fca5a5;
+        }
+
+        .error-content {
+          flex: 1;
+        }
+
+        .error-title {
+          color: #fca5a5;
+          font-size: 1.1rem;
+          font-weight: 600;
+          margin-bottom: 0.5rem;
+        }
+
+        .error-message {
+          color: #fecaca;
+          font-size: 0.9rem;
+          line-height: 1.5;
+        }
+
+        .error-detail {
+          color: #fca5a5;
+          font-size: 0.85rem;
+          margin-top: 0.5rem;
+          font-style: italic;
+        }
+
+        .error-info {
+          display: flex;
+          align-items: center;
+          gap: 1rem;
+        }
+
         @media (max-width: 768px) {
           .header-title h1 {
             font-size: 2rem;
@@ -286,8 +341,15 @@ export default function StatusPage() {
               <p>Monitoramento em tempo real</p>
             </div>
             <div className="status-indicator">
-              <div className="status-dot"></div>
-              <span className="status-text">Operacional</span>
+              <div
+                className="status-dot"
+                style={{
+                  backgroundColor: error ? "#ef4444" : getStatusColor(),
+                }}
+              ></div>
+              <span className="status-text">
+                {error ? "Falha na conexão" : "Operacional"}
+              </span>
             </div>
           </div>
 
@@ -296,7 +358,30 @@ export default function StatusPage() {
               <div className="spinner"></div>
               Carregando...
             </div>
-          ) : (
+          ) : error ? (
+            <div className="card error-card">
+              <div className="error-info">
+                <div className="error-icon">
+                  <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+                    />
+                  </svg>
+                </div>
+                <div className="error-content">
+                  <h3 className="error-title">Falha na Conexão</h3>
+                  <p className="error-message">
+                    Não foi possível conectar ao servidor. Tentando reconectar
+                    automaticamente...
+                  </p>
+                  <p className="error-detail">{error.message}</p>
+                </div>
+              </div>
+            </div>
+          ) : data && data.database ? (
             <>
               <div className="card">
                 <div className="card-header">
@@ -316,7 +401,13 @@ export default function StatusPage() {
                     </div>
 
                     <div className="progress-bar">
-                      <div className="progress-fill"></div>
+                      <div
+                        className="progress-fill"
+                        style={{
+                          width: `${getConnectionPercentage()}%`,
+                          backgroundColor: getStatusColor(),
+                        }}
+                      ></div>
                     </div>
 
                     <div className="progress-labels">
@@ -365,7 +456,7 @@ export default function StatusPage() {
                 </div>
               </div>
             </>
-          )}
+          ) : null}
         </div>
       </div>
     </>
