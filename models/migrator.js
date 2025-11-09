@@ -8,7 +8,7 @@ function getDefaultMigrationOptions(dbClient, dryRun) {
     dryRun: dryRun,
     dir: resolve(process.cwd(), "infra", "migrations"),
     direction: "up",
-    verbose: true,
+    log: () => {},
     migrationsTable: "pgmigrations",
   };
 }
