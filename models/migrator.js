@@ -1,6 +1,7 @@
 import migrationRunner from "node-pg-migrate";
 import { resolve } from "node:path";
 import database from "infra/database.js";
+import { ServiceError } from "infra/errors.js";
 
 function getDefaultMigrationOptions(dbClient, dryRun) {
   return {
@@ -8,7 +9,7 @@ function getDefaultMigrationOptions(dbClient, dryRun) {
     dryRun: dryRun,
     dir: resolve(process.cwd(), "infra", "migrations"),
     direction: "up",
-    verbose: true,
+    log: () => {},
     migrationsTable: "pgmigrations",
   };
 }
